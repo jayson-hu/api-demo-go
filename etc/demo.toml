@@ -1,17 +1,23 @@
 [app]
-name = "demo"
+name = "demo1"
 host = "0.0.0.0"
 port = "8050"
-key = "this is a your app key"
+key  = "this is your app key"
 
 [mysql]
-host = ""
+host = "127.0.0.1"
 port = "3306"
-username = "go_course"
-password = "xxxx"
-database = "go_course"
+username = "root"
+password = "123456"
+database = "test"
 
 [log]
+# // DebugLevel: "debug",
+# // InfoLevel:  "info",
+# // WarnLevel:  "warning",
+# // ErrorLevel: "error",
+# // FatalLevel: "fatal",
+# // PanicLevel: "panic",
 level = "debug"
 dir = "logs"
 format = "text"
