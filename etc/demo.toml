@@ -5,11 +5,11 @@ port = "8050"
 key  = "this is your app key"
 
 [mysql]
-host = "127.0.0.1"
+host = ""
 port = "3306"
 username = "root"
-password = "123456"
-database = "test"
+password = "xxx"
+database = "nextcloud"
 
 [log]
 # // DebugLevel: "debug",
