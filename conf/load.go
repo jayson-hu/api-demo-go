@@ -19,7 +19,7 @@ func LoadConfigFromToml(filePath string) error {
 	}
 
 	return nil
-	return loadGlobal()
+	//return loadGlobal()
 }
 
 // LoadConfigFromTEnv 从环境变量中加载配置
