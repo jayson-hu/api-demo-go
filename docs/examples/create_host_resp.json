@@ -1,0 +1,30 @@
+{
+  "code": 0,
+  "data": {
+    "id": "test-02",
+    "vendor": 0,
+    "region": "hangzhou",
+    "zone": "",
+    "create_at": 1659520992899,
+    "expire_at": 0,
+    "category": "",
+    "type": "1",
+    "name": "test",
+    "description": "",
+    "status": "",
+    "tags": "",
+    "update_at": 0,
+    "sync_at": 0,
+    "account": "",
+    "public_ip": "",
+    "private_ip": "",
+    "pay_type": "",
+    "cpu": 2,
+    "memory": 2,
+    "gpu_amount": 0,
+    "gpu_spec": "",
+    "os_type": "",
+    "os_name": "",
+    "serial_number": ""
+  }
+}

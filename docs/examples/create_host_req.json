@@ -1,0 +1,8 @@
+{
+  "Id" :"test-02",
+  "Name": "test",
+  "Region":"hangzhou",
+  "Type" :"1",
+  "CPU" : 2,
+  "Memory": 2
+}
