@@ -16,8 +16,6 @@ func (h *Handler) createHost(c *gin.Context)  {
 		return
 	}
 
-
-
 	//进行接口调用
 	ins, err := h.svc.CreateHost(c.Request.Context(), ins)
 	if err != nil {

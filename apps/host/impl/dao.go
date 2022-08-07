@@ -48,6 +48,10 @@ func (i HostServiceImpl) save(ctx context.Context, ins *host.Host) error {
 	if err != nil {
 		return err
 	}
+
+
+
+
 	dstmt, err := tx.Prepare(InsertDescribeSQL)
 	if err != nil {
 		return err
@@ -60,6 +64,10 @@ func (i HostServiceImpl) save(ctx context.Context, ins *host.Host) error {
 	if err != nil {
 		return err
 	}
+
+
+
+
 	return nil
 
 }
