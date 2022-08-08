@@ -8,10 +8,10 @@ import (
 
 // 业务处理层
 func (i *HostServiceImpl) CreateHost(ctx context.Context, ins *host.Host) (*host.Host, error) {
-	i.l.Debug("create host")
+	i.l.Info("create host")
 	i.l.Debugf("create host %s", ins.Name)
 	//携带了metedata, 常用语trace
-	i.l.With(logger.NewAny("request-id", "req01")).Debug("create hsot with meta kv")
+	i.l.With(logger.NewAny("request-id", "")).Debug("create hsot with meta kv")
 
 	//检验数据合法性
 	if err := ins.Validate(); err != nil {

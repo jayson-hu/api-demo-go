@@ -19,6 +19,5 @@ database = "go_course"
 # // FatalLevel: "fatal",
 # // PanicLevel: "panic",
 level = "debug"
-dir = "logs"
 format = "text"
 to = "stdout"

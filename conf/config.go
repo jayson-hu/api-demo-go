@@ -136,9 +136,9 @@ func (m *MySQL) getDBConn() (*sql.DB, error) {
 
 func NewDefaultLog() *Log {
 	return &Log{
-		Level:  "info",
-		Format: TextFormat,
-		To:     ToStdout,
+		Level:   "info",
+		Format:  TextFormat,
+		To:      ToStdout,
 	}
 }
 
@@ -146,4 +146,5 @@ type Log struct {
 	Level  string    `toml:"level" env:"LOG_LEVEL"`
 	Format LogFormat `toml:"format" env:"LOG_FORMAT"`
 	To     LogTo     `toml:"to" env:"LOG_TO"`
+	PathDir string		`toml:"path_dir" env:"LOG_PATH_DIR"`
 }
