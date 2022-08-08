@@ -63,11 +63,21 @@ func InitImpl() {
 		v.Config()
 	}
 }
+
+// LoadedGinApps 已经加载完成的gin app有哪些
+func LoadedGinApps() (names []string) {
+	for k := range ginApps {
+		names = append(names, k)
+	}
+	return names
+}
+
 func InitGin(r gin.IRouter) {
 	//把所有对象进行初始化
 	for _, v := range ginApps {
 		v.Config()
 	}
+	//完成 http handler 的注册
 	for _, v := range ginApps {
 		v.Registry(r)
 	}

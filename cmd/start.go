@@ -1,10 +1,12 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
+	"github.com/infraboard/mcube/logger"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/gin-gonic/gin"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/spf13/cobra"
 
@@ -12,6 +14,7 @@ import (
 	_ "github.com/jayson-hu/api-demo-go/apps/all"
 	"github.com/jayson-hu/api-demo-go/apps/host/http"
 	"github.com/jayson-hu/api-demo-go/conf"
+	"github.com/jayson-hu/api-demo-go/protocol"
 )
 
 var (
@@ -29,6 +32,7 @@ var StartCmd = &cobra.Command{
 	Short: "启动 demo 后端API",
 	Long:  "启动 demo 后端API",
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		// 加载程序配置
 		err := conf.LoadConfigFromToml(confFile)
 		if err != nil {
@@ -55,13 +59,55 @@ var StartCmd = &cobra.Command{
 		api := http.NewHostHTTPHander()
 		api.Config()
 		//提供gin 的一个router
-		g := gin.Default()
-		//api.Register(g)
-		apps.InitGin(g)
-		g.Run(conf.C().App.HttpAddr())
+		//g := gin.Default()
+		////api.Register(g)
+		//apps.InitGin(g)
+		//g.Run(conf.C().App.HttpAddr())
 
-		return errors.New("no flag find")
+		//return errors.New("no flag find")
+
+		//启动服务
+
+
+
+		svc := NewManager()
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch ,syscall.SIGTERM, syscall.SIGINT,syscall.SIGQUIT, syscall.SIGHUP )
+		go svc.WaitStop(ch)
+		return svc.Start()
 	},
+}
+
+func NewManager() *Manager {
+	return &Manager{
+		http:protocol.NewHttpService(),
+		l: zap.L().Named("CLI"),
+	}
+
+}
+
+//用于管理所有需要启动的服务
+
+type Manager struct {
+	http *protocol.HttpService
+	l logger.Logger
+}
+
+func (m *Manager) Start() error {
+	return m.http.Start()
+}
+
+// 处理来自外部的中断信号，比如Terminal
+func (m *Manager) WaitStop(ch <-chan os.Signal) error {
+	for v := range ch{
+		switch v {
+		default:
+			m.l.Infof("received signal %s", v)
+			m.http.Stop()
+
+		}
+	}
+	return m.http.Stop()
 }
 
 // 问题：
