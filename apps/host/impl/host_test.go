@@ -31,6 +31,19 @@ func TestCreate(t *testing.T) {
 	}
 
 }
+
+func TestQuery(t *testing.T) {
+	should := assert.New(t)
+
+	req := host.NewQueryHostRequest()
+	req.Keywords = "test"
+	set, err := service.QueryHost(context.Background(), req)
+	if should.NoError(err) {
+		for i := range set.Items {
+			fmt.Println(set.Items[i].Id)
+		}
+	}
+}
 func init() {
 	err := conf.LoadConfigFromToml("D:\\GoProject\\go-course-demo\\api-demo-go\\etc\\demo.toml")
 	//err := conf.LoadConfigFromTEnv()

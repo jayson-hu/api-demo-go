@@ -2,6 +2,8 @@ package host
 
 import (
 	"context"
+	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -24,8 +26,8 @@ type Service interface {
 	DeleteHost(context.Context, *DeleteHostRequest) (*Host, error)
 }
 type HostSet struct {
-	Items []*Host
 	Total int
+	Items []*Host
 }
 type UpdateHostRequest struct {
 	*Describe
@@ -34,6 +36,9 @@ type DeleteHostRequest struct {
 	Id string
 }
 type QueryHostRequest struct {
+	PageSize   int    `json:"page_size"`
+	PageNumber int    `json:"page_number"`
+	Keywords   string `json:"kws"`
 }
 
 func NewHost() *Host {
@@ -41,6 +46,16 @@ func NewHost() *Host {
 		Resource: &Resource{},
 		Describe: &Describe{},
 	}
+}
+
+func NewHostSet() *HostSet {
+	return &HostSet{
+		Items: []*Host{},
+	}
+}
+
+func (s *HostSet) Add(item *Host) {
+	s.Items = append(s.Items, item)
 }
 
 //Host 模型的定义
@@ -55,13 +70,12 @@ func (h *Host) Validate() error {
 	return validate.Struct(h)
 }
 
-func (h *Host) InjectDefault()  {
-	if h.CreateAt ==0{
+func (h *Host) InjectDefault() {
+	if h.CreateAt == 0 {
 		h.CreateAt = time.Now().UnixNano() / 1e6 //毫秒
 	}
 
 }
-
 
 const (
 	Private_IDC Vendor = iota
@@ -101,4 +115,37 @@ type Describe struct {
 	OSType       string `json:"os_type"`
 	OSName       string `json:"os_name"`
 	SerialNumber string `json:"serial_number"`
+}
+
+func NewQueryHostFromHTTP(r *http.Request) *QueryHostRequest {
+	req := NewQueryHostRequest()
+	// query string
+	qs := r.URL.Query()
+	pss := qs.Get("page_size")
+	if pss != "" {
+		req.PageSize, _ = strconv.Atoi(pss)
+	}
+
+	pns := qs.Get("page_number")
+	if pns != "" {
+		req.PageNumber, _ = strconv.Atoi(pns)
+	}
+
+	req.Keywords = qs.Get("kws")
+	return req
+}
+
+func NewQueryHostRequest() *QueryHostRequest {
+	return &QueryHostRequest{
+		PageSize:   20,
+		PageNumber: 1,
+	}
+}
+
+func (req *QueryHostRequest) GetPageSize() uint {
+	return uint(req.PageSize)
+}
+
+func (req *QueryHostRequest) OffSet() int64 {
+	return int64((req.PageNumber - 1) * req.PageSize)
 }
