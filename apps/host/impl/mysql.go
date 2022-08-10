@@ -13,12 +13,12 @@ import (
 //var _ host.Service = (*HostServiceImpl)(nil)
 
 //这样写，会造成conf.c()并没有准备好, 造成方法panic
-//var impl = NewHosServiceImpl()
+//var impl = NewHostServiceImpl()
 //只有准备好对象，把对象的注册和初始化，独立出来
 var impl = &HostServiceImpl{}
 
-//NewHosServiceImpl 保证调用该函数之前已经完成全局config对象完成初始化
-func NewHosServiceImpl() *HostServiceImpl {
+//NewHostServiceImpl 保证调用该函数之前已经完成全局config对象完成初始化
+func NewHostServiceImpl() *HostServiceImpl {
 	return &HostServiceImpl{
 		// host service 服务的 Newlogger
 		// 封装的zap 让其满足 Logger接口

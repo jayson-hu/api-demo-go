@@ -44,6 +44,18 @@ func TestQuery(t *testing.T) {
 		}
 	}
 }
+
+func TestDescribe(t *testing.T) {
+	should := assert.New(t)
+
+	req := host.NewDescribeHostWithId("test-01")
+	ins, err := service.DescribeHost(context.Background(), req)
+	if should.NoError(err) {
+		fmt.Println(ins.Name)
+	}
+}
+
+
 func init() {
 	err := conf.LoadConfigFromToml("D:\\GoProject\\go-course-demo\\api-demo-go\\etc\\demo.toml")
 	//err := conf.LoadConfigFromTEnv()
@@ -54,6 +66,6 @@ func init() {
 	//为什么不设计默认打印.因为性能
 	zap.DevelopmentSetup()
 	//host service 的具体实现
-	service = impl.NewHosServiceImpl()
+	service = impl.NewHostServiceImpl()
 
 }

@@ -19,7 +19,7 @@ type Service interface {
 	// QueryHost 查询主机
 	QueryHost(context.Context, *QueryHostRequest) (*HostSet, error)
 	// DescribeHost 查询主机详情
-	DescribeHost(context.Context, *QueryHostRequest) (*Host, error)
+	DescribeHost(context.Context, *DescirbeHostRequest) (*Host, error)
 	// UpdateHost 主机更新
 	UpdateHost(context.Context, *UpdateHostRequest) (*Host, error)
 	// DeleteHost 主机删除, 比如前端需要打印当前删除主机的ip或者其他的信息
@@ -53,6 +53,11 @@ func NewHostSet() *HostSet {
 		Items: []*Host{},
 	}
 }
+
+type DescirbeHostRequest struct {
+	Id string
+}
+
 
 func (s *HostSet) Add(item *Host) {
 	s.Items = append(s.Items, item)
@@ -141,6 +146,13 @@ func NewQueryHostRequest() *QueryHostRequest {
 		PageNumber: 1,
 	}
 }
+
+func NewDescribeHostWithId(id string) *DescirbeHostRequest {
+	return &DescirbeHostRequest{
+		Id: id,
+	}
+}
+
 
 func (req *QueryHostRequest) GetPageSize() uint {
 	return uint(req.PageSize)
