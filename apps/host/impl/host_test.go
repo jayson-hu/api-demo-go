@@ -55,6 +55,34 @@ func TestDescribe(t *testing.T) {
 	}
 }
 
+func TestUpdatePut(t *testing.T) {
+	should := assert.New(t)
+
+	req := host.NewPutUpdateHostRequest("test-01")
+	req.Name = "更新测试put"
+	req.Region = "03"
+	req.Type = "small"
+	req.CPU = 111
+	req.Memory = 11
+	ins, err := service.UpdateHost(context.Background(), req)
+	if should.NoError(err) {
+		fmt.Println(ins.Name)
+	}
+}
+func TestUpdatePatch(t *testing.T) {
+	should := assert.New(t)
+
+	req := host.NewPatchUpdateHostRequest("test-02")
+	fmt.Println("==========",req.Name)
+	req.Name = "更新测试1put"
+
+	ins, err := service.UpdateHost(context.Background(), req)
+	fmt.Println("==========",ins, err)
+
+	if should.NoError(err) {
+		fmt.Println(ins.Id)
+	}
+}
 
 func init() {
 	err := conf.LoadConfigFromToml("D:\\GoProject\\go-course-demo\\api-demo-go\\etc\\demo.toml")

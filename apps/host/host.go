@@ -2,6 +2,7 @@ package host
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -11,6 +12,20 @@ import (
 
 var (
 	validate = validator.New()
+)
+
+type Vendor int
+type UPDATE_MODE string
+
+const (
+	UPDATE_MODE_PUT UPDATE_MODE = "put"
+
+	UPDATE_MODE_PATCH UPDATE_MODE = "patch"
+)
+const (
+	Private_IDC Vendor = iota
+	ALIYUN
+	TXYUN
 )
 
 type Service interface {
@@ -29,8 +44,36 @@ type HostSet struct {
 	Total int
 	Items []*Host
 }
+
+func NewPutUpdateHostRequest(id string) *UpdateHostRequest {
+	h := NewHost()
+	h.Id = id
+	return &UpdateHostRequest{
+		UpdateMode: UPDATE_MODE_PUT,
+		Host: h,
+		//Describe:&Describe{},
+		//Resource: &Resource{},
+
+	}
+}
+func NewPatchUpdateHostRequest(id string) *UpdateHostRequest {
+	h := NewHost()
+	h.Id = id
+	return &UpdateHostRequest{
+		//Id: id,
+		UpdateMode: UPDATE_MODE_PATCH,
+		//Describe: &Describe{},
+		//Resource: &Resource{},
+		Host: h,
+	}
+}
+
 type UpdateHostRequest struct {
-	*Describe
+	//Id         string      `json:"id"`
+	UpdateMode UPDATE_MODE `json:"update_mode"`
+	*Host
+	//*Describe
+	//*Resource
 }
 type DeleteHostRequest struct {
 	Id string
@@ -58,7 +101,6 @@ type DescirbeHostRequest struct {
 	Id string
 }
 
-
 func (s *HostSet) Add(item *Host) {
 	s.Items = append(s.Items, item)
 }
@@ -81,14 +123,6 @@ func (h *Host) InjectDefault() {
 	}
 
 }
-
-const (
-	Private_IDC Vendor = iota
-	ALIYUN
-	TXYUN
-)
-
-type Vendor int
 
 type Resource struct {
 	Id       string `json:"id" validate:"required"` //全局唯一ID
@@ -153,11 +187,35 @@ func NewDescribeHostWithId(id string) *DescirbeHostRequest {
 	}
 }
 
-
 func (req *QueryHostRequest) GetPageSize() uint {
 	return uint(req.PageSize)
 }
 
 func (req *QueryHostRequest) OffSet() int64 {
 	return int64((req.PageNumber - 1) * req.PageSize)
+}
+
+// 对象的全量更新
+func (h *Host) Put(obj *Host) error {
+	//h.Description = obj // 这种是直接对象更换，把对象直接更换
+	//*h.Description = *obj // 不是指针的copy， 不是值的更换
+	if obj.Id != h.Id {
+		return fmt.Errorf("id not equal")
+	}
+	*h.Resource = *obj.Resource
+	*h.Describe = *obj.Describe
+	return nil
+
+}
+
+func (h *Host) Patch(obj *Host) error {
+	if obj.Name != "" {
+		h.Name = obj.Name
+	}
+	if obj.CPU != 0 {
+		h.CPU = obj.CPU
+	}
+
+	return nil
+
 }

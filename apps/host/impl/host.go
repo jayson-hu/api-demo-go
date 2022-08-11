@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"fmt"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/sqlbuilder"
 	"github.com/jayson-hu/api-demo-go/apps/host"
@@ -116,7 +117,39 @@ func (i *HostServiceImpl) QueryHost(ctx context.Context, req *host.QueryHostRequ
 	return set, nil
 }
 func (i *HostServiceImpl) UpdateHost(ctx context.Context, req *host.UpdateHostRequest) (*host.Host, error) {
-	return nil, nil
+	// 获取已有的对象
+	ins, err := i.DescribeHost(ctx, host.NewDescribeHostWithId(req.Id))
+	if err != nil {
+		return nil, err
+	}
+	//更新的更新模式
+	switch req.UpdateMode {
+	case host.UPDATE_MODE_PUT:
+		err := ins.Put(req.Host)
+		if err != nil {
+			return nil, err
+		}
+	case host.UPDATE_MODE_PATCH:
+		err := ins.Patch(req.Host)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("update mode only put or patch")
+
+	}
+	//检查更新的数据是否合法
+	err = ins.Validate()
+	if err != nil{
+		return nil, err
+	}
+	//更新数据库里面的数据
+	if err := i.update(ctx,ins); err != nil{
+		return nil, err
+	}
+	//返回更新的后的对象
+
+	return ins, nil
 }
 func (i *HostServiceImpl) DeleteHost(ctx context.Context, req *host.DeleteHostRequest) (*host.Host, error) {
 	return nil, nil

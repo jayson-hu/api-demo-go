@@ -8,7 +8,7 @@ import (
 
 //用于暴露Host Service接口
 
-func (h *Handler) createHost(c *gin.Context)  {
+func (h *Handler) createHost(c *gin.Context) {
 	ins := host.NewHost()
 	//用户传递过来的函数进行解析
 	if err := c.Bind(ins); err != nil {
@@ -43,6 +43,44 @@ func (h *Handler) DescribeHost(c *gin.Context) {
 
 	// 进行接口调用, 返回 肯定有成功或者失败
 	set, err := h.svc.DescribeHost(c.Request.Context(), req)
+	if err != nil {
+		response.Failed(c.Writer, err)
+		return
+	}
+
+	response.Success(c.Writer, set)
+}
+
+func (h *Handler) PutHost(c *gin.Context) {
+	// 从http请求的query string 中获取参数
+	req := host.NewPutUpdateHostRequest(c.Param("id"))
+	//解析body中的数据
+	if err := c.Bind(req.Host); err != nil {
+		response.Failed(c.Writer, err)
+		return
+	}
+	req.Id = c.Param("id")
+	// 进行接口调用, 返回 肯定有成功或者失败
+	set, err := h.svc.UpdateHost(c.Request.Context(), req)
+	if err != nil {
+		response.Failed(c.Writer, err)
+		return
+	}
+
+	response.Success(c.Writer, set)
+}
+
+func (h *Handler) PatchHost(c *gin.Context) {
+	// 从http请求的query string 中获取参数
+	req := host.NewPatchUpdateHostRequest(c.Param("id"))
+	if err := c.Bind(req.Host); err != nil {
+		response.Failed(c.Writer, err)
+		return
+	}
+	req.Id = c.Param("id")
+
+	// 进行接口调用, 返回 肯定有成功或者失败
+	set, err := h.svc.UpdateHost(c.Request.Context(), req)
 	if err != nil {
 		response.Failed(c.Writer, err)
 		return

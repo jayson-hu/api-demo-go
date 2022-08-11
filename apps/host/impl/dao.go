@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"github.com/jayson-hu/api-demo-go/apps/host"
 )
@@ -10,7 +11,6 @@ import (
 
 // 把Host对象保存到数据库
 func (i HostServiceImpl) save(ctx context.Context, ins *host.Host) error {
-
 
 	var err error
 	//初始化事务
@@ -49,9 +49,6 @@ func (i HostServiceImpl) save(ctx context.Context, ins *host.Host) error {
 		return err
 	}
 
-
-
-
 	dstmt, err := tx.Prepare(InsertDescribeSQL)
 	if err != nil {
 		return err
@@ -64,10 +61,51 @@ func (i HostServiceImpl) save(ctx context.Context, ins *host.Host) error {
 	if err != nil {
 		return err
 	}
-
-
-
-
 	return nil
 
+}
+
+func (i *HostServiceImpl) update(ctx context.Context, ins *host.Host) error {
+	var err error
+	//开启事务
+	tx, err := i.db.BeginTx(ctx, nil)
+
+	if err != nil {
+		return err
+	}
+	//处理事务的提交方式
+	//1. 无错误则提交commit
+	//2.有报错rollback回滚
+	defer func() {
+		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				i.l.Error("rollback error, %s", err)
+			}
+		} else {
+			if err := tx.Commit(); err != nil {
+				i.l.Error("commit error, %s", err)
+
+			}
+		}
+	}()
+	var (
+		resStmt, hostStmt *sql.Stmt
+	)
+	//更新resource表格
+	resStmt, err = tx.PrepareContext(ctx, updateResourceSQL)
+	if err != nil {
+		return err
+	}
+	_, err = resStmt.ExecContext(ctx, ins.Vendor, ins.Region, ins.ExpireAt, ins.Name, ins.Description, ins.Id)
+	if err != nil {
+		return err
+	}
+	// 更新host表
+	hostStmt, err = tx.PrepareContext(ctx, updateHostSQL)
+	_, err = hostStmt.ExecContext(ctx, ins.CPU, ins.Memory, ins.Id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
