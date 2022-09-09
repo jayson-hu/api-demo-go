@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/imdario/mergo"
 )
 
 var (
@@ -209,13 +210,16 @@ func (h *Host) Put(obj *Host) error {
 }
 
 func (h *Host) Patch(obj *Host) error {
-	if obj.Name != "" {
-		h.Name = obj.Name
-	}
-	if obj.CPU != 0 {
-		h.CPU = obj.CPU
-	}
-
-	return nil
+	//if obj.Name != "" {
+	//	h.Name = obj.Name
+	//}
+	//if obj.CPU != 0 {
+	//	h.CPU = obj.CPU
+	//}
+	//err :=
+	//if err != nil {
+	//	return err
+	//}
+	return mergo.MergeWithOverwrite(h, obj)
 
 }

@@ -69,21 +69,34 @@ func TestUpdatePut(t *testing.T) {
 		fmt.Println(ins.Name)
 	}
 }
+//func TestUpdatePatch(t *testing.T) {
+//	should := assert.New(t)
+//
+//	req := host.NewPatchUpdateHostRequest("test-02")
+//	fmt.Println("==========",req.Name)
+//	req.Name = "更新测试1put"
+//
+//	ins, err := service.UpdateHost(context.Background(), req)
+//	fmt.Println("==========",ins, err)
+//
+//	if should.NoError(err) {
+//		fmt.Println(ins.Id)
+//	}
+//}
+
 func TestUpdatePatch(t *testing.T) {
 	should := assert.New(t)
 
-	req := host.NewPatchUpdateHostRequest("test-02")
+	req := host.NewPatchUpdateHostRequest("test-01")
 	fmt.Println("==========",req.Name)
-	req.Name = "更新测试1put"
+	req.Description = "dddddd"
 
 	ins, err := service.UpdateHost(context.Background(), req)
-	fmt.Println("==========",ins, err)
 
 	if should.NoError(err) {
 		fmt.Println(ins.Id)
 	}
 }
-
 func init() {
 	err := conf.LoadConfigFromToml("D:\\GoProject\\go-course-demo\\api-demo-go\\etc\\demo.toml")
 	//err := conf.LoadConfigFromTEnv()
